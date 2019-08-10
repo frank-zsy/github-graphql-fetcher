@@ -8,6 +8,7 @@ function parseRepo(r: RawRepoInfo): Repo {
         // basic
         id: r.id,
         owner: r.owner ? r.owner.login : null,
+        ownerInfo: r.owner,
         name: r.name,
         createdAt: r.createdAt ? new Date(r.createdAt) : null,
         updatedAt: r.updatedAt ? new Date(r.updatedAt) : null,
@@ -71,6 +72,20 @@ export async function getRepos(login: string, client: GitHubClient, updatedAfter
 type RawRepoInfo = {
     owner: {
         login: string;
+        __typename: string;
+        name: string;
+        bio: string;
+        description: string;
+        createdAt: Date;
+        company: string;
+        location: string;
+        websiteUrl: URL;
+        repositories: {
+            totalCount: number;
+        }
+        membersWithRole: {
+            totalCount: number;
+        }
     };
     name: string;
     id: string;
@@ -147,6 +162,32 @@ const listReposSql = `query listReopsFirst($login: String!, $num: Int, $cursor: 
             nodes {
                 owner {
                     login
+                    __typename
+                    ... on User {
+                        name
+                        email
+                        bio
+                        location
+                        company
+                        createdAt
+                        websiteUrl
+                        repositories {
+                            totalCount
+                        }
+                    }
+                    ... on Organization {
+                        name
+                        email
+                        description
+                        location
+                        websiteUrl
+                        repositories {
+                            totalCount
+                        }
+                        membersWithRole {
+                            totalCount
+                        }
+                    }
                 }
                 name
                 id
