@@ -2,6 +2,23 @@ export type Repo = {
     // basic
     id: string;
     owner: string;
+    ownerInfo: {
+        login: string;
+        __typename: string;
+        name: string;
+        bio: string;
+        description: string;
+        createdAt: Date;
+        company: string;
+        location: string;
+        websiteUrl: URL;
+        repositories: {
+            totalCount: number;
+        }
+        membersWithRole: {
+            totalCount: number;
+        }
+    };
     name: string;
     license: string;
     codeOfConduct: string;

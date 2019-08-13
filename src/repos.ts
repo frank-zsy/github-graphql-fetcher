@@ -11,7 +11,8 @@ export async function getRepo(owner: string, name: string, client: GitHubClient)
     let repo: Repo = {
         // basic
         id: r.id,
-        owner,
+        owner: owner,
+        ownerInfo: r.owner,
         name,
         license: r.licenseInfo ? r.licenseInfo.name : null,
         codeOfConduct: r.codeOfConduct ? r.codeOfConduct.url : null,
@@ -50,6 +51,20 @@ type RepoInfo = {
     repository: {
         owner: {
             login: string;
+            __typename: string;
+            name: string;
+            bio: string;
+            description: string;
+            createdAt: Date;
+            company: string;
+            location: string;
+            websiteUrl: URL;
+            repositories: {
+                totalCount: number;
+            }
+            membersWithRole: {
+                totalCount: number;
+            }
         };
         name: string;
         id: string;
@@ -108,6 +123,32 @@ const getInitialRepoInfoSql = `query getRepo($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name) {
         owner {
             login
+            __typename
+            ... on User {
+                name
+                email
+                bio
+                location
+                company
+                createdAt
+                websiteUrl
+                repositories {
+                    totalCount
+                }
+            }
+            ... on Organization {
+                name
+                email
+                description
+                location
+                websiteUrl
+                repositories {
+                    totalCount
+                }
+                membersWithRole {
+                    totalCount
+                }
+            }
         }
         name
         id
